@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>สมุดอวยพรวันเกิด ฟิม 🎂</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@600;800&family=Mali:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --sky-top: #2f9bea; --sky-mid: #74c6fb; --sky-low: #cdeeff;
+    --navy: #0b3a66; --paper: #fff8ec; --ink: #5a2347; --pink: #ff6f9c;
+    --bh: min(80vh, 125vw);
+  }
+  @supports (height: 1dvh) { :root { --bh: min(80dvh, 125vw); } }
+  :root { --bw: calc(var(--bh) * .7); --ls: calc(var(--bh) * .052); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: "Mali", "Kanit", system-ui, sans-serif;
+    color: var(--ink); touch-action: none;
+    -webkit-user-select: none; user-select: none;
+    background:
+      radial-gradient(ellipse 28% 9% at 18% 22%, rgba(255,255,255,.85), transparent 70%),
+      radial-gradient(ellipse 22% 7% at 82% 16%, rgba(255,255,255,.8), transparent 70%),
+      radial-gradient(ellipse 30% 8% at 72% 70%, rgba(255,255,255,.55), transparent 70%),
+      linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 50%, var(--sky-low) 100%);
+  }
+  .scene { position: fixed; inset: 0; perspective: 2600px; }
+
+  /* ---------- book ---------- */
+  .book {
+    position: absolute; left: 50%; top: 46%;
+    width: var(--bw); height: var(--bh);
+    transform: translate(calc(-50% + var(--shift, 0px)), -50%);
+    transform-style: preserve-3d;
+    transition: transform .9s ease;
+  }
+  @media (min-width: 900px) and (orientation: landscape) {
+    .book.open { --shift: calc(var(--bw) / 2); }
+  }
+  .leaf {
+    position: absolute; inset: 0; transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(.5, .05, .25, 1);
+    cursor: pointer;
+  }
+  .leaf.flipped { transform: rotateY(-180deg); }
+  .leaf.last { transform: none !important; cursor: default; }
+  .face {
+    position: absolute; inset: 0; overflow: hidden;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 5px 16px 16px 5px;
+    box-shadow: 0 10px 30px rgba(11,58,102,.35), inset -2px 0 0 rgba(0,0,0,.06);
+  }
+  .face.back { transform: rotateY(180deg); border-radius: 16px 5px 5px 16px; }
+  .front::before, .back::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 3; }
+  .front::before { background: linear-gradient(90deg, rgba(90,35,71,.28), transparent 9%); }
+  .back::before  { background: linear-gradient(270deg, rgba(90,35,71,.28), transparent 9%); }
+  .leaf.turning .face::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 4;
+    background: linear-gradient(90deg, rgba(11,58,102,0), rgba(11,58,102,.3));
+    animation: shade 1s ease both;
+  }
+  @keyframes shade { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+
+  /* ---------- paper ---------- */
+  .lined {
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(90deg, transparent 11%, rgba(255,111,156,.55) 11%, rgba(255,111,156,.55) calc(11% + 2px), transparent calc(11% + 2px)),
+      repeating-linear-gradient(180deg, transparent 0 calc(var(--ls) - 1px), rgba(70,150,220,.3) calc(var(--ls) - 1px) var(--ls));
+    padding: calc(var(--ls) * 1.5) 8% 0 16%;
+    line-height: var(--ls);
+  }
+  .lined h2 { font: 800 calc(var(--bh) * .04)/var(--ls) "Kanit", sans-serif; color: #e0457d; margin-bottom: var(--ls); }
+  .lined p  { font-weight: 600; font-size: calc(var(--bh) * .03); line-height: var(--ls); }
+  .lined .foot { position: absolute; left: 16%; right: 8%; bottom: calc(var(--ls) * .6); font-size: calc(var(--bh) * .026); color: #2f7fc4; font-weight: 600; }
+  .lined .big { position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--bh) * .22); padding-left: 8%; }
+  .lined .cap { position: absolute; left: 16%; right: 8%; bottom: calc(var(--ls) * 2); font-weight: 600; font-size: calc(var(--bh) * .03); text-align: center; }
+
+  .cover {
+    background: linear-gradient(145deg, #ff9bbd, #ff5f93);
+    color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: calc(var(--bh) * .022); text-align: center; font-family: "Kanit", sans-serif;
+  }
+  .cover::after { content: ""; position: absolute; inset: 3.5%; border: 2px dashed rgba(255,255,255,.7); border-radius: 10px 14px 14px 10px; pointer-events: none; }
+  .cover .sub { font-weight: 600; font-size: calc(var(--bh) * .03); }
+  .cover .t {
+    font-weight: 800; font-size: calc(var(--bh) * .082); line-height: 1.1;
+    background: linear-gradient(180deg, #fff7c2, #ffcf3f 55%, #e8a317);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 2px 0 rgba(150,40,80,.45));
+  }
+  .cover .n {
+    width: calc(var(--bh) * .2); height: calc(var(--bh) * .2); border-radius: 50%;
+    display: grid; place-items: center; font-weight: 800; font-size: calc(var(--bh) * .1);
+    color: #b8325f; background: radial-gradient(circle at 35% 30%, #fff7c2, #ffcf3f 70%);
+    box-shadow: 0 6px 0 rgba(150,40,80,.35);
+  }
+  .cover .photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+  .cover .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.38), transparent 26%, transparent 78%, rgba(0,0,0,.45)); }
+  .cover .to {
+    position: absolute; top: 6%; left: 0; right: 0; font-weight: 800;
+    font-size: calc(var(--bh) * .085); line-height: 1.2; color: #fff;
+    text-shadow: 0 3px 16px rgba(0,0,0,.65);
+  }
+  .cover .tap { text-shadow: 0 2px 10px rgba(0,0,0,.7); z-index: 2; }
+  .cover .tap { position: absolute; bottom: 7%; font-weight: 600; font-size: calc(var(--bh) * .026); opacity: .95; }
+
+  /* ---------- last page: cake ---------- */
+  .cakepage {
+    position: absolute; inset: 0; overflow: hidden; border-radius: 5px 16px 16px 5px;
+    background: linear-gradient(180deg, #bfe6ff, #f3fbff 68%, #ffeef4);
+    box-shadow: 0 10px 30px rgba(11,58,102,.35);
+  }
+  .cakepage canvas { position: absolute; inset: 0; display: block; cursor: grab; touch-action: none; }
+  .cakepage canvas:active { cursor: grabbing; }
+  .ch { position: absolute; top: 3.5%; left: 0; right: 0; text-align: center; pointer-events: none; font-family: "Kanit", sans-serif; color: var(--navy); }
+  .ch .hbd { font-weight: 800; font-size: calc(var(--bh) * .056); line-height: 1.15; }
+  .ch .wish { font-weight: 600; font-size: calc(var(--bh) * .03); }
+  .cctl { position: absolute; bottom: 3%; left: 0; right: 0; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .cctl .hint { width: 100%; text-align: center; font-size: calc(var(--bh) * .021); color: var(--navy); opacity: .8; font-family: "Kanit", sans-serif; }
+
+  /* ---------- controls ---------- */
+  button {
+    font-family: "Kanit", sans-serif; font-weight: 600; font-size: 15px;
+    padding: 9px 18px; border-radius: 999px; border: 0; cursor: pointer;
+    color: var(--navy); background: #fff; box-shadow: 0 4px 14px rgba(11,58,102,.28);
+  }
+  button:active { transform: scale(.96); }
+  button:disabled { opacity: .45; cursor: default; }
+  button:focus-visible { outline: 3px solid #ffd54a; outline-offset: 2px; }
+  .nav {
+    position: fixed; left: 0; right: 0; bottom: max(14px, env(safe-area-inset-bottom));
+    display: flex; gap: 14px; align-items: center; justify-content: center;
+  }
+  .dots { display: flex; gap: 7px; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.6); transition: all .3s; }
+  .dots i.on { background: #fff; width: 22px; border-radius: 6px; }
+  @media (prefers-reduced-motion: reduce) { .leaf, .book { transition-duration: .01s; } .leaf.turning .face::after { animation: none; } }
+</style>
+</head>
+<body>
+<div class="scene">
+  <div class="book" id="book">
+
+    <div class="leaf" data-i="0">
+      <div class="face front cover">
+        <img class="photo" alt="" src="cover.jpg" />
+        <div class="shade"></div>
+        <div class="tap">แตะเพื่อเปิดอ่าน</div>
+      </div>
+      <div class="face back lined">
+        <p style="margin-top:calc(var(--ls)*3)">สมุดเล่มนี้เป็นของ</p>
+        <h2 style="font-size:calc(var(--bh)*.07)">✨ ฟิม ✨</h2>
+        <p>เปิดอ่านได้เฉพาะวันนี้เท่านั้นนะ 😆</p>
+      </div>
+    </div>
+
+    <div class="leaf" data-i="1">
+      <div class="face front lined">
+        <h2>สุขสันต์วันเกิดนะฟิม 🎉</h2>
+        <p>วันนี้อายุ 25 แล้วนะ ขอบคุณที่เกิดมาเป็นคนน่ารักแบบนี้ ขอให้ปีนี้เป็นปีที่ดีมากๆ สำหรับเธอ</p>
+      </div>
+      <div class="face back lined"><div class="big">🎈</div><div class="cap">อ่านต่อนะ ยังมีอีก</div></div>
+    </div>
+
+    <div class="leaf" data-i="2">
+      <div class="face front lined">
+        <h2>ขอให้มีความสุขมากๆ 💖</h2>
+        <p>ยิ้มได้ทุกวัน หัวเราะได้ทุกเรื่อง สุขภาพแข็งแรง นอนหลับสบาย กินอะไรก็อร่อย</p>
+      </div>
+      <div class="face back lined"><div class="big">🎁</div><div class="cap">ของขวัญคือคำอวยพร</div></div>
+    </div>
+
+    <div class="leaf" data-i="3">
+      <div class="face front lined">
+        <h2>ขอให้ทุกอย่างสมหวัง ✨</h2>
+        <p>ขอให้ทุกความฝันเป็นจริง เจอแต่เรื่องดีๆ เจอแต่คนดีๆ เงินทองไหลมาเทมา</p>
+        <div class="foot">พลิกไปหน้าสุดท้าย เพื่อเป่าเค้กกัน 🎂</div>
+      </div>
+      <div class="face back lined"><div class="big">🕯️</div><div class="cap">ใกล้แล้ว ทำใจให้พร้อม</div></div>
+    </div>
+
+    <div class="leaf last" data-i="4">
+      <div class="cakepage" id="cakePage">
+        <div class="ch"><div class="hbd">HBD.นะฟิม 🎉</div><div class="wish">ขอให้มีความสุขมากๆ 💖</div></div>
+        <div class="cctl">
+          <div class="hint">ลากนิ้วเพื่อหมุนเค้ก 360° · สองนิ้วเพื่อซูม</div>
+          <button id="btnAuto">⏸ หยุดหมุน</button>
+          <button id="btnBlow">💨 เป่าเทียน</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="nav">
+  <button id="prev">‹ ย้อนกลับ</button>
+  <div class="dots" id="dots"></div>
+  <button id="next">เปิดสมุด ›</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+  const TEXT = "HBD.ฟิม";
+
+  // ---------- Three.js scene (renders inside the last page) ----------
+  const page = document.getElementById("cakePage");
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  page.insertBefore(renderer.domElement, page.firstChild);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, 0.7, 0.1, 100);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.75));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+  sun.position.set(4, 8, 6);
+  scene.add(sun);
+  const warm = new THREE.PointLight(0xffb347, 1.2, 9);
+  warm.position.set(0, 4, 0);
+  scene.add(warm);
+
+  // ---------- Cake ----------
+  const cake = new THREE.Group();
+  scene.add(cake);
+
+  const mat = (color, extra = {}) =>
+    new THREE.MeshStandardMaterial({ color, roughness: 0.55, metalness: 0.05, ...extra });
+
+  // plate
+  const plate = new THREE.Mesh(new THREE.CylinderGeometry(3.3, 3.3, 0.14, 64), mat(0xffffff, { metalness: 0.3, roughness: 0.3 }));
+  plate.position.y = -0.07;
+  cake.add(plate);
+
+  // ---- side textures (drawn on canvas) ----
+  function sideTex(w, h, draw) {
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    draw(c.getContext("2d"), w, h);
+    const t = new THREE.CanvasTexture(c);
+    t.anisotropy = 8;
+    t.wrapS = THREE.RepeatWrapping;
+    return t;
+  }
+  function star(x, cx, cy, r, color) {
+    x.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const a = -Math.PI / 2 + (i * Math.PI) / 5, rr = i % 2 ? r * 0.45 : r;
+      x.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr);
+    }
+    x.closePath(); x.fillStyle = color; x.fill();
+  }
+  function heart(x, cx, cy, s, color) {
+    x.save(); x.translate(cx, cy); x.scale(s, s);
+    x.beginPath();
+    x.moveTo(0, 0.35);
+    x.bezierCurveTo(-1, -0.2, -0.5, -0.9, 0, -0.4);
+    x.bezierCurveTo(0.5, -0.9, 1, -0.2, 0, 0.35);
+    x.fillStyle = color; x.fill(); x.restore();
+  }
+
+  // tier 1: pink + scallops + polka dots + hearts + blue wave
+  const side1 = sideTex(2048, 140, (x, w, h) => {
+    const g = x.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, "#ffe0ea"); g.addColorStop(1, "#ffb8d0");
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+    const cols = ["#ffffff", "#ff7aa2", "#ffd54a", "#7ee0d2", "#8fd3ff"];
+    let k = 0;
+    for (let i = 0; i < 64; i++) {
+      const cx = i * 32 + 16, up = i % 2 === 0;
+      const cy = up ? 62 : 92;
+      if (i % 8 === 4) heart(x, cx, cy, 15, "#ff4d85");
+      else { x.beginPath(); x.arc(cx, cy, 8, 0, 7); x.fillStyle = cols[k++ % cols.length]; x.fill(); }
+    }
+    // blue wave at bottom
+    x.fillStyle = "#8fd3ff";
+    x.beginPath(); x.moveTo(0, h);
+    for (let i = 0; i <= w; i += 8) x.lineTo(i, 116 + Math.sin(i / 32 * Math.PI) * 5);
+    x.lineTo(w, h); x.closePath(); x.fill();
+    // white scallops hanging from top
+    x.fillStyle = "#ffffff";
+    for (let i = 0; i < 32; i++) { x.beginPath(); x.arc(i * 64 + 32, 0, 32, 0, Math.PI); x.fill(); }
+  });
+
+  // tier 2: stripes + gold ribbon + stars
+  const side2 = sideTex(2048, 160, (x, w, h) => {
+    for (let i = 0; i < 32; i++) {
+      x.fillStyle = i % 2 ? "#ffd0de" : "#ff8fb4";
+      x.fillRect(i * 64, 0, 64, h);
+    }
+    for (let i = 0; i < 16; i++) star(x, i * 128 + 64, 34, 15, "#ffffff");
+    for (let i = 0; i < 16; i++) star(x, i * 128 + 64, 128, 15, "#ffffff");
+    x.fillStyle = "#ffcf3f"; x.fillRect(0, 64, w, 34);
+    x.fillStyle = "#fff3b0"; x.fillRect(0, 64, w, 5); x.fillRect(0, 93, w, 5);
+    for (let i = 0; i < 64; i++) { x.beginPath(); x.arc(i * 32 + 16, 81, 5, 0, 7); x.fillStyle = "#ffffff"; x.fill(); }
+  });
+
+  const sideMats = (tex, topColor) => [
+    new THREE.MeshStandardMaterial({ map: tex, roughness: 0.5 }),
+    mat(topColor), mat(topColor),
+  ];
+
+  // tier 1
+  const T1_R = 2.6, T1_H = 1.1;
+  const tier1 = new THREE.Mesh(new THREE.CylinderGeometry(T1_R, T1_R, T1_H, 96), sideMats(side1, 0xffe3ec));
+  tier1.position.y = T1_H / 2;
+  cake.add(tier1);
+
+  // tier 2
+  const T2_R = 1.95, T2_H = 0.95;
+  const tier2 = new THREE.Mesh(new THREE.CylinderGeometry(T2_R, T2_R, T2_H, 96), sideMats(side2, 0xffc2d4));
+  tier2.position.y = T1_H + T2_H / 2;
+  cake.add(tier2);
+  const TOP_Y = T1_H + T2_H;
+
+  // cream rings (icing edges)
+  function ring(r, y, tube, color) {
+    const m = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 16, 80), mat(color, { roughness: 0.4 }));
+    m.rotation.x = Math.PI / 2;
+    m.position.y = y;
+    cake.add(m);
+  }
+  ring(T1_R, T1_H, 0.09, 0xffffff);
+  ring(T1_R, 0.03, 0.1, 0xffffff);
+  ring(T2_R, TOP_Y, 0.09, 0xffffff);
+  ring(T2_R, T1_H + 0.03, 0.08, 0xffffff);
+
+  // pearl border on tier 1 top
+  const pearlGeo = new THREE.SphereGeometry(0.11, 14, 14);
+  const pearlColors = [0xffd54a, 0xff6f91, 0x7ee0d2, 0xffffff];
+  for (let i = 0; i < 40; i++) {
+    const a = (i / 40) * Math.PI * 2;
+    const p = new THREE.Mesh(pearlGeo, mat(pearlColors[i % 4], { roughness: 0.25, metalness: 0.3 }));
+    p.position.set(Math.cos(a) * (T1_R - 0.32), T1_H + 0.1, Math.sin(a) * (T1_R - 0.32));
+    cake.add(p);
+  }
+
+  // drips on tier 2
+  for (let i = 0; i < 18; i++) {
+    const a = (i / 18) * Math.PI * 2 + 0.1;
+    const len = 0.25 + ((i * 37) % 10) / 10 * 0.35;
+    const d = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, len, 12), mat(0xffffff, { roughness: 0.35 }));
+    d.position.set(Math.cos(a) * (T2_R + 0.01), TOP_Y - len / 2 - 0.02, Math.sin(a) * (T2_R + 0.01));
+    cake.add(d);
+    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 12), mat(0xffffff, { roughness: 0.35 }));
+    tip.position.set(d.position.x, TOP_Y - len - 0.02, d.position.z);
+    cake.add(tip);
+  }
+
+  // rosettes around the base of tier 1
+  const roseCols = [0xffffff, 0xff9fbd, 0xffffff, 0x8fd3ff];
+  for (let i = 0; i < 36; i++) {
+    const a = (i / 36) * Math.PI * 2, r = T1_R + 0.08;
+    const c = roseCols[i % 4];
+    [[0.17, 0.17], [0.12, 0.3], [0.07, 0.4]].forEach(([rad, y]) => {
+      const b = new THREE.Mesh(new THREE.SphereGeometry(rad, 14, 12), mat(c, { roughness: 0.35 }));
+      b.position.set(Math.cos(a) * r, y, Math.sin(a) * r);
+      cake.add(b);
+    });
+  }
+
+  // bunting garland around tier 1
+  const flagGeo = new THREE.BufferGeometry();
+  flagGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array([-0.17, 0, 0, 0.17, 0, 0, 0, -0.34, 0]), 3));
+  flagGeo.computeVertexNormals();
+  const flagCols = [0xff6f91, 0xffd54a, 0x4fc3f7, 0xffffff, 0x7ee0d2];
+  const FLAGS = 26;
+  for (let i = 0; i < FLAGS; i++) {
+    const a = (i / FLAGS) * Math.PI * 2 + 0.06;
+    const f = new THREE.Mesh(flagGeo, new THREE.MeshStandardMaterial({ color: flagCols[i % flagCols.length], side: THREE.DoubleSide, roughness: 0.7 }));
+    const r = T1_R + 0.03;
+    f.position.set(Math.cos(a) * r, 0.9 - (i % 2) * 0.04, Math.sin(a) * r);
+    f.rotation.y = Math.PI / 2 - a;
+    cake.add(f);
+  }
+  const string = new THREE.Mesh(new THREE.TorusGeometry(T1_R + 0.03, 0.012, 8, 120), mat(0xffffff));
+  string.rotation.x = Math.PI / 2; string.position.y = 0.91;
+  cake.add(string);
+
+  // ---------- Text on top (canvas texture) ----------
+  const cv = document.createElement("canvas");
+  cv.width = cv.height = 1024;
+  const ctx = cv.getContext("2d");
+  const topTex = new THREE.CanvasTexture(cv);
+  topTex.anisotropy = 8;
+
+  function drawTop() {
+    ctx.clearRect(0, 0, 1024, 1024);
+    ctx.beginPath();
+    ctx.arc(512, 512, 512, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffc2d4";
+    ctx.fill();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = '800 175px "Kanit", "Noto Sans Thai", sans-serif';
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 22;
+    ctx.strokeStyle = "#ffffff";
+    ctx.strokeText(TEXT, 512, 720);
+    ctx.fillStyle = "#d81b60";
+    ctx.fillText(TEXT, 512, 720);
+    topTex.needsUpdate = true;
+  }
+  drawTop();
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load('800 100px "Kanit"', TEXT).then(drawTop).catch(() => {});
+  }
+
+  const topDisc = new THREE.Mesh(
+    new THREE.CircleGeometry(T2_R - 0.02, 64),
+    new THREE.MeshStandardMaterial({ map: topTex, roughness: 0.5, transparent: true })
+  );
+  topDisc.rotation.x = -Math.PI / 2;
+  topDisc.position.y = TOP_Y + 0.015;
+  cake.add(topDisc);
+
+  // ---------- Candles shaped like "25" ----------
+  const SEG = {
+    2: ["a", "b", "g", "e", "d"],
+    5: ["a", "f", "g", "c", "d"],
+  };
+  const W = 0.72, H = 1.2, T = 0.15;
+  const candleColors = [0x6ec6ff, 0xffffff, 0xffd54a, 0xff6f91];
+  const flames = [];
+
+  function segment(name) {
+    switch (name) {
+      case "a": return { x: 0, y: H - T / 2, w: W, h: T };
+      case "g": return { x: 0, y: H / 2, w: W, h: T };
+      case "d": return { x: 0, y: T / 2, w: W, h: T };
+      case "f": return { x: -W / 2 + T / 2, y: (H * 3) / 4, w: T, h: H / 2 };
+      case "b": return { x: W / 2 - T / 2, y: (H * 3) / 4, w: T, h: H / 2 };
+      case "e": return { x: -W / 2 + T / 2, y: H / 4, w: T, h: H / 2 };
+      case "c": return { x: W / 2 - T / 2, y: H / 4, w: T, h: H / 2 };
+    }
+  }
+
+  function addFlame(parent, x, y) {
+    const g = new THREE.Group();
+    g.position.set(x, y, 0);
+    const outer = new THREE.Mesh(
+      new THREE.SphereGeometry(0.1, 14, 14),
+      new THREE.MeshBasicMaterial({ color: 0xffa726, transparent: true, opacity: 0.9 })
+    );
+    outer.scale.set(0.8, 1.7, 0.8);
+    outer.position.y = 0.17;
+    const inner = new THREE.Mesh(
+      new THREE.SphereGeometry(0.06, 12, 12),
+      new THREE.MeshBasicMaterial({ color: 0xfff3a0 })
+    );
+    inner.scale.set(0.8, 1.6, 0.8);
+    inner.position.y = 0.13;
+    g.add(outer, inner);
+    parent.add(g);
+    flames.push({ g, seed: Math.random() * 10 });
+  }
+
+  const numberGroup = new THREE.Group();
+  numberGroup.position.set(0, TOP_Y + 0.02, -0.55);
+  cake.add(numberGroup);
+
+  const digits = ["2", "5"];
+  const GAP = 0.3;
+  const totalW = digits.length * W + (digits.length - 1) * GAP;
+  digits.forEach((d, di) => {
+    const dg = new THREE.Group();
+    dg.position.x = -totalW / 2 + W / 2 + di * (W + GAP);
+    SEG[d].forEach((s, i) => {
+      const p = segment(s);
+      const m = new THREE.Mesh(
+        new THREE.BoxGeometry(p.w, p.h, T),
+        mat(candleColors[(i + di) % candleColors.length], { roughness: 0.6 })
+      );
+      m.position.set(p.x - 0, p.y - H / 2 + H / 2, 0);
+      m.position.y = p.y;
+      m.position.x = p.x;
+      dg.add(m);
+    });
+    // flames on top segment (left, center, right)
+    addFlame(dg, -W / 2 + T / 2, H);
+    addFlame(dg, 0, H);
+    addFlame(dg, W / 2 - T / 2, H);
+    numberGroup.add(dg);
+  });
+
+  // ---------- Sparkles ----------
+  const sparkN = 70;
+  const sparkGeo = new THREE.BufferGeometry();
+  const sp = new Float32Array(sparkN * 3);
+  for (let i = 0; i < sparkN; i++) {
+    const a = Math.random() * Math.PI * 2, r = 3 + Math.random() * 3;
+    sp[i * 3] = Math.cos(a) * r;
+    sp[i * 3 + 1] = Math.random() * 5;
+    sp[i * 3 + 2] = Math.sin(a) * r;
+  }
+  sparkGeo.setAttribute("position", new THREE.BufferAttribute(sp, 3));
+  const sparkles = new THREE.Points(
+    sparkGeo,
+    new THREE.PointsMaterial({ color: 0xffffff, size: 0.09, transparent: true, opacity: 0.85 })
+  );
+  scene.add(sparkles);
+
+  // ---------- Cake interaction ----------
+  let yaw = 0.4, velocity = 0, auto = true, pitch = 0.42, dist = 12.5, lit = true;
+  const pointers = new Map();
+  let lastPinch = 0;
+  const el = renderer.domElement;
+  const pinchDist = () => { const [p, q] = [...pointers.values()]; return Math.hypot(p.x - q.x, p.y - q.y); };
+  el.addEventListener("pointerdown", (e) => {
+    el.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 2) lastPinch = pinchDist();
+  });
+  el.addEventListener("pointermove", (e) => {
+    const p = pointers.get(e.pointerId);
+    if (!p) return;
+    if (pointers.size === 1) {
+      const dx = e.clientX - p.x, dy = e.clientY - p.y;
+      yaw += dx * 0.011; velocity = dx * 0.011;
+      pitch = Math.min(1.2, Math.max(0.1, pitch + dy * 0.005));
+    }
+    p.x = e.clientX; p.y = e.clientY;
+    if (pointers.size === 2) {
+      const d = pinchDist();
+      dist = Math.min(18, Math.max(7, dist - (d - lastPinch) * 0.03));
+      lastPinch = d;
+    }
+  });
+  const up = (e) => pointers.delete(e.pointerId);
+  el.addEventListener("pointerup", up);
+  el.addEventListener("pointercancel", up);
+  el.addEventListener("wheel", (e) => { e.preventDefault(); dist = Math.min(18, Math.max(7, dist + e.deltaY * 0.01)); }, { passive: false });
+
+  const btnAuto = document.getElementById("btnAuto"), btnBlow = document.getElementById("btnBlow");
+  btnAuto.onclick = () => { auto = !auto; btnAuto.textContent = auto ? "⏸ หยุดหมุน" : "▶ หมุนอัตโนมัติ"; };
+  btnBlow.onclick = () => { lit = !lit; btnBlow.textContent = lit ? "💨 เป่าเทียน" : "🔥 จุดเทียน"; if (!lit) warm.intensity = 0; };
+
+  new ResizeObserver(() => {
+    const w = page.clientWidth, h = page.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
+    camera.fov = w < h ? 52 : 42;
+    camera.updateProjectionMatrix();
+  }).observe(page);
+
+  // ---------- Book ----------
+  const book = document.getElementById("book");
+  const leaves = [...book.querySelectorAll(".leaf")];
+  const N = leaves.length;
+  const prev = document.getElementById("prev"), next = document.getElementById("next");
+  const dotsEl = document.getElementById("dots");
+  for (let i = 0; i < N; i++) dotsEl.appendChild(document.createElement("i"));
+  let cur = 0, cakeVisible = false;
+
+  function render(first) {
+    leaves.forEach((l, i) => {
+      if (i === N - 1) { l.style.zIndex = 1; return; }
+      const f = i < cur, was = l.classList.contains("flipped");
+      if (f !== was) {
+        l.classList.toggle("flipped", f);
+        l.classList.add("turning");
+        l.style.zIndex = 100;
+        clearTimeout(l._t);
+        l._t = setTimeout(() => { l.classList.remove("turning"); l.style.zIndex = f ? i : N - i; }, 1000);
+      } else if (first) l.style.zIndex = f ? i : N - i;
+    });
+    book.classList.toggle("open", cur > 0);
+    [...dotsEl.children].forEach((d, i) => d.classList.toggle("on", i === cur));
+    prev.disabled = cur === 0;
+    next.disabled = cur === N - 1;
+    next.textContent = cur === 0 ? "เปิดสมุด ›" : "ถัดไป ›";
+    cakeVisible = cur >= N - 2;
+  }
+  const go = (n) => { cur = Math.max(0, Math.min(N - 1, n)); render(); };
+  prev.onclick = () => go(cur - 1);
+  next.onclick = () => go(cur + 1);
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") go(cur + 1);
+    if (e.key === "ArrowLeft") go(cur - 1);
+  });
+
+  let sx = null, swiped = false;
+  book.addEventListener("pointerdown", (e) => { if (cur === N - 1) return; sx = e.clientX; swiped = false; });
+  window.addEventListener("pointerup", (e) => {
+    if (sx === null) return;
+    const dx = e.clientX - sx; sx = null;
+    if (Math.abs(dx) > 45) { swiped = true; go(cur + (dx < 0 ? 1 : -1)); setTimeout(() => (swiped = false), 60); }
+  });
+  leaves.forEach((l, i) => l.addEventListener("click", () => {
+    if (swiped) return;
+    if (i === cur && cur < N - 1) go(cur + 1);
+    else if (i === cur - 1) go(cur - 1);
+  }));
+  render(true);
+
+  // ---------- Loop ----------
+  const clock = new THREE.Clock();
+  const target = new THREE.Vector3(0, 2.6, 0);
+  function tick() {
+    requestAnimationFrame(tick);
+    if (!cakeVisible) return;
+    const t = clock.getElapsedTime();
+    if (pointers.size === 0) { yaw += velocity; velocity *= 0.94; if (auto) yaw += 0.006; }
+    cake.rotation.y = yaw;
+    camera.position.set(0, target.y + Math.sin(pitch) * dist, Math.cos(pitch) * dist);
+    camera.lookAt(target);
+    flames.forEach((f) => {
+      f.g.visible = lit;
+      const s = 1 + Math.sin(t * 12 + f.seed) * 0.12 + Math.sin(t * 7.3 + f.seed * 2) * 0.08;
+      f.g.scale.set(1 / s, s, 1 / s);
+      f.g.rotation.z = Math.sin(t * 5 + f.seed) * 0.08;
+    });
+    if (lit) warm.intensity = 1.1 + Math.sin(t * 10) * 0.15;
+    sparkles.rotation.y = t * 0.05;
+    renderer.render(scene, camera);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>
