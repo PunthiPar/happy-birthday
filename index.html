@@ -11,10 +11,10 @@
   :root {
     --sky-top: #2f9bea; --sky-mid: #74c6fb; --sky-low: #cdeeff;
     --navy: #0b3a66; --paper: #fff8ec; --ink: #5a2347; --pink: #ff6f9c;
-    --bh: min(65vh, 105vw);
+    --bh: min(80vh, 125vw);
   }
-  @supports (height: 1dvh) { :root { --bh: min(65dvh, 105vw); } }
-  :root { --bw: min(calc(var(--bh) * .68), 43vw); --ls: calc(var(--bh) * .052); }
+  @supports (height: 1dvh) { :root { --bh: min(80dvh, 125vw); } }
+  :root { --bw: calc(var(--bh) * .7); --ls: calc(var(--bh) * .052); }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
@@ -32,17 +32,16 @@
 
   /* ---------- book ---------- */
   .book {
-    position: absolute; left: 50%; top: 44%;
+    position: absolute; left: 50%; top: 46%;
     width: var(--bw); height: var(--bh);
     transform: translate(calc(-50% + var(--shift, 0px)), -50%);
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
     transition: transform .9s ease;
   }
-  
-  /* จัดกึ่งกลางสมุดเมื่อเปิดออกทั้งบนมือถือและคอม */
-  .book.open { --shift: calc(var(--bw) / 2); }
-
+  @media (min-width: 900px) and (orientation: landscape) {
+    .book.open { --shift: calc(var(--bw) / 2); }
+  }
   .leaf {
     position: absolute; inset: 0; transform-origin: left center;
     transform-style: preserve-3d;
@@ -158,9 +157,9 @@
         <div class="shade"></div>
         <div class="tap">แตะเพื่อเปิดอ่าน</div>
       </div>
-      <div class="face back lined" style="display: flex; flex-direction: column; align-items: center; padding-top: calc(var(--ls) * 0.5);">
-        <h2 style="text-align: center; color: #000000; margin-bottom: 4px; font-size: calc(var(--bh) * .06);">2024</h2>
-        <video controls autoplay muted loop style="width: 90%; max-height: 42vh; border-radius: 8px; object-fit: cover;">
+      <div class="face back lined" style="display: flex; flex-direction: column; align-items: center;">
+        <h2 style="text-align: center; color: #000000; margin-top: calc(var(--ls) * 0.5); font-size: calc(var(--bh) * .07);">2024</h2>
+        <video controls autoplay muted loop style="width: 85%; max-height: 50vh; border-radius: 12px; margin-top: 10px; object-fit: cover;">
           <source src="video2024.mp4" type="video/mp4">
           เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
         </video>
