@@ -36,6 +36,7 @@
     width: var(--bw); height: var(--bh);
     transform: translate(calc(-50% + var(--shift, 0px)), -50%);
     transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
     transition: transform .9s ease;
   }
   @media (min-width: 900px) and (orientation: landscape) {
@@ -44,6 +45,7 @@
   .leaf {
     position: absolute; inset: 0; transform-origin: left center;
     transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
     transition: transform 1s cubic-bezier(.5, .05, .25, 1);
     cursor: pointer;
   }
@@ -52,6 +54,7 @@
   .face {
     position: absolute; inset: 0; overflow: hidden;
     backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    background-color: var(--paper);
     border-radius: 5px 16px 16px 5px;
     box-shadow: 0 10px 30px rgba(11,58,102,.35), inset -2px 0 0 rgba(0,0,0,.06);
   }
@@ -136,6 +139,7 @@
   .nav {
     position: fixed; left: 0; right: 0; bottom: max(14px, env(safe-area-inset-bottom));
     display: flex; gap: 14px; align-items: center; justify-content: center;
+    z-index: 1000;
   }
   .dots { display: flex; gap: 7px; }
   .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.6); transition: all .3s; }
@@ -147,7 +151,6 @@
 <div class="scene">
   <div class="book" id="book">
 
-    <!-- หน้าที่ 1 (หน้าปก & หน้าปี 2024 ใส่คลิปวิดีโอ) -->
     <div class="leaf" data-i="0">
       <div class="face front cover">
         <img class="photo" alt="" src="cover.jpg" />
@@ -163,7 +166,6 @@
       </div>
     </div>
 
-    <!-- หน้าที่ 2 -->
     <div class="leaf" data-i="1">
       <div class="face front lined">
         <h2>สุขสันต์วันเกิดนะฟิม 🎉</h2>
@@ -172,7 +174,6 @@
       <div class="face back lined"><div class="big">🎈</div><div class="cap">อ่านต่อนะ ยังมีอีก</div></div>
     </div>
 
-    <!-- หน้าที่ 3 -->
     <div class="leaf" data-i="2">
       <div class="face front lined">
         <h2>ขอให้มีความสุขมากๆ 💖</h2>
@@ -181,7 +182,6 @@
       <div class="face back lined"><div class="big">🎁</div><div class="cap">ของขวัญคือคำอวยพร</div></div>
     </div>
 
-    <!-- หน้าที่ 4 -->
     <div class="leaf" data-i="3">
       <div class="face front lined">
         <h2>ขอให้ทุกอย่างสมหวัง ✨</h2>
@@ -191,7 +191,6 @@
       <div class="face back lined"><div class="big">🕯️</div><div class="cap">ใกล้แล้ว ทำใจให้พร้อม</div></div>
     </div>
 
-    <!-- หน้าสุดท้าย (เค้ก 3D) -->
     <div class="leaf last" data-i="4">
       <div class="cakepage" id="cakePage">
         <div class="ch"><div class="hbd">HBD.นะฟิม 🎉</div><div class="wish">ขอให้มีความสุขมากๆ 💖</div></div>
@@ -211,6 +210,7 @@
   <div class="dots" id="dots"></div>
   <button id="next">เปิดสมุด ›</button>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (() => {
@@ -284,12 +284,10 @@
       if (i % 8 === 4) heart(x, cx, cy, 15, "#ff4d85");
       else { x.beginPath(); x.arc(cx, cy, 8, 0, 7); x.fillStyle = cols[k++ % cols.length]; x.fill(); }
     }
-    // blue wave at bottom
     x.fillStyle = "#8fd3ff";
     x.beginPath(); x.moveTo(0, h);
     for (let i = 0; i <= w; i += 8) x.lineTo(i, 116 + Math.sin(i / 32 * Math.PI) * 5);
     x.lineTo(w, h); x.closePath(); x.fill();
-    // white scallops hanging from top
     x.fillStyle = "#ffffff";
     for (let i = 0; i < 32; i++) { x.beginPath(); x.arc(i * 64 + 32, 0, 32, 0, Math.PI); x.fill(); }
   });
@@ -325,7 +323,7 @@
   cake.add(tier2);
   const TOP_Y = T1_H + T2_H;
 
-  // cream rings (icing edges)
+  // cream rings
   function ring(r, y, tube, color) {
     const m = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 16, 80), mat(color, { roughness: 0.4 }));
     m.rotation.x = Math.PI / 2;
@@ -359,7 +357,7 @@
     cake.add(tip);
   }
 
-  // rosettes around the base of tier 1
+  // rosettes
   const roseCols = [0xffffff, 0xff9fbd, 0xffffff, 0x8fd3ff];
   for (let i = 0; i < 36; i++) {
     const a = (i / 36) * Math.PI * 2, r = T1_R + 0.08;
@@ -371,7 +369,7 @@
     });
   }
 
-  // bunting garland around tier 1
+  // bunting garland
   const flagGeo = new THREE.BufferGeometry();
   flagGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array([-0.17, 0, 0, 0.17, 0, 0, 0, -0.34, 0]), 3));
   flagGeo.computeVertexNormals();
@@ -389,7 +387,7 @@
   string.rotation.x = Math.PI / 2; string.position.y = 0.91;
   cake.add(string);
 
-  // ---------- Text on top (canvas texture) ----------
+  // ---------- Text on top ----------
   const cv = document.createElement("canvas");
   cv.width = cv.height = 1024;
   const ctx = cv.getContext("2d");
@@ -483,12 +481,9 @@
         new THREE.BoxGeometry(p.w, p.h, T),
         mat(candleColors[(i + di) % candleColors.length], { roughness: 0.6 })
       );
-      m.position.set(p.x - 0, p.y - H / 2 + H / 2, 0);
-      m.position.y = p.y;
-      m.position.x = p.x;
+      m.position.set(p.x, p.y, 0);
       dg.add(m);
     });
-    // flames on top segment (left, center, right)
     addFlame(dg, -W / 2 + T / 2, H);
     addFlame(dg, 0, H);
     addFlame(dg, W / 2 - T / 2, H);
