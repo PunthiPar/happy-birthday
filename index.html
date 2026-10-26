@@ -147,6 +147,7 @@
 <div class="scene">
   <div class="book" id="book">
 
+    <!-- หน้าที่ 1 (หน้าปก & หน้าปี 2024 ใส่คลิปวิดีโอ) -->
     <div class="leaf" data-i="0">
       <div class="face front cover">
         <img class="photo" alt="" src="cover.jpg" />
@@ -155,15 +156,14 @@
       </div>
       <div class="face back lined" style="display: flex; flex-direction: column; align-items: center;">
         <h2 style="text-align: center; color: #000000; margin-top: calc(var(--ls) * 0.5); font-size: calc(var(--bh) * .07);">2024</h2>
-        <video controls autoplay muted loop style="width: 85%; max-height: 60vh; border-radius: 12px; margin-top: 10px; object-fit: cover;">
+        <video controls autoplay muted loop style="width: 85%; max-height: 50vh; border-radius: 12px; margin-top: 10px; object-fit: cover;">
           <source src="video2024.mp4" type="video/mp4">
           เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
         </video>
       </div>
-        <h2 style="text-align: center; color: #000000; margin-top: calc(var(--ls) * 1); font-size: calc(var(--bh) * .07);">2024</h2>
-      </div>
     </div>
 
+    <!-- หน้าที่ 2 -->
     <div class="leaf" data-i="1">
       <div class="face front lined">
         <h2>สุขสันต์วันเกิดนะฟิม 🎉</h2>
@@ -172,6 +172,7 @@
       <div class="face back lined"><div class="big">🎈</div><div class="cap">อ่านต่อนะ ยังมีอีก</div></div>
     </div>
 
+    <!-- หน้าที่ 3 -->
     <div class="leaf" data-i="2">
       <div class="face front lined">
         <h2>ขอให้มีความสุขมากๆ 💖</h2>
@@ -180,6 +181,7 @@
       <div class="face back lined"><div class="big">🎁</div><div class="cap">ของขวัญคือคำอวยพร</div></div>
     </div>
 
+    <!-- หน้าที่ 4 -->
     <div class="leaf" data-i="3">
       <div class="face front lined">
         <h2>ขอให้ทุกอย่างสมหวัง ✨</h2>
@@ -189,6 +191,7 @@
       <div class="face back lined"><div class="big">🕯️</div><div class="cap">ใกล้แล้ว ทำใจให้พร้อม</div></div>
     </div>
 
+    <!-- หน้าสุดท้าย (เค้ก 3D) -->
     <div class="leaf last" data-i="4">
       <div class="cakepage" id="cakePage">
         <div class="ch"><div class="hbd">HBD.นะฟิม 🎉</div><div class="wish">ขอให้มีความสุขมากๆ 💖</div></div>
@@ -208,7 +211,6 @@
   <div class="dots" id="dots"></div>
   <button id="next">เปิดสมุด ›</button>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (() => {
